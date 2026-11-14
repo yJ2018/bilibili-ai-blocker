@@ -1,0 +1,44 @@
+/* 只在卡片上方叠加提示，不改变 B 站原有布局 */
+.bbai-hidden {
+  display: none !important;
+}
+
+/* B 站信息流末尾的「下一批骨架卡」占位，藏掉避免被顶进视口 */
+.bbai-skeleton-hidden {
+  display: none !important;
+}
+
+/* 末尾的加载锚点里也是一张骨架卡：压成 1px，视觉消失但保留滚动加载的触发点 */
+.bbai-anchor-collapsed {
+  height: 1px !important;
+  min-height: 0 !important;
+  max-height: 1px !important;
+  overflow: hidden !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+}
+
+.bbai-marked {
+  position: relative !important;
+  outline: 2px dashed #fb7299 !important;
+  outline-offset: -2px !important;
+}
+
+.bbai-marked::after {
+  content: attr(data-bbai-reason);
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 9999;
+  max-width: 100%;
+  padding: 2px 6px;
+  border-radius: 0 0 6px 0;
+  background: #fb7299;
+  color: #fff;
+  font-size: 12px;
+  line-height: 16px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  pointer-events: none;
+}
