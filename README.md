@@ -5,9 +5,11 @@
 
 判定依据是 **B 站自己的内容声明数据**（`argue_info.argue_msg`），不是靠标题瞎猜。
 
-| 屏蔽前 | 屏蔽后 |
-| --- | --- |
-| ![屏蔽前](docs/before.jpg) | ![屏蔽后](docs/after.jpg) |
+<p align="center">
+  <img src="docs/before.jpg" width="400" alt="屏蔽前">
+  <img src="docs/after.jpg" width="400" alt="屏蔽后">
+</p>
+<p align="center"><sub>左：屏蔽前　右：屏蔽后</sub></p>
 
 ---
 
@@ -186,15 +188,17 @@ for (const kw of GUESS_KEYWORDS) {
 
 默认态（设置展开、列表收起）：
 
-![面板默认态](docs/popup.png)
-
-点「已屏蔽」展开预览列表（设置自动收起，弹窗不超过 600px）：
-
-![面板展开列表](docs/popup-list.png)
+<p align="center">
+  <a href="docs/popup.png"><img src="docs/popup.png" width="340" alt="面板默认态"></a>
+  <a href="docs/popup-list.png"><img src="docs/popup-list.png" width="340" alt="面板展开列表"></a>
+</p>
+<p align="center"><sub>左：默认态　右：点「已屏蔽」展开列表</sub></p>
 
 调试模式（只标注不隐藏）：
 
-![调试模式](docs/debug.jpg)
+<p align="center">
+  <a href="docs/debug.jpg"><img src="docs/debug.jpg" width="700" alt="调试模式"></a>
+</p>
 
 ---
 
