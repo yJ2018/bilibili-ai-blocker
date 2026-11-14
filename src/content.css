@@ -48,9 +48,7 @@ html.bbai-hide-hero .recommended-swipe {
   display: none !important;
 }
 
-/* 可选：隐藏右侧「换一换 / 刷新 / 稍后再看」悬浮按钮（默认关闭，面板里开） */
-html.bbai-hide-side .feed-roll-btn,
-html.bbai-hide-side .flexible-roll-btn,
+/* 可选：只隐藏右侧「稍后再看」悬浮按钮，「换一换 / 刷新」保留（默认关闭，面板里开） */
 html.bbai-hide-side .watchlater-pip-button {
   display: none !important;
 }
