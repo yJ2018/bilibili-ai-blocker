@@ -80,6 +80,8 @@
     guess: false,
     markOnly: false,
     hideLive: true,
+    hideHero: false,
+    hideSideButtons: false,
     keywords: ''
   };
 
@@ -685,6 +687,7 @@
 
   function refresh() {
     unhideAll();
+    applyLayoutFlags();
     state.done = new WeakSet();
     state.doneFloor = new WeakSet();
     state.bvidOf = new WeakMap();
@@ -710,6 +713,21 @@
     pushBadge();
   }
 
+  /* -------------------------------- 布局开关 -------------------------------- */
+
+  /**
+   * 两个纯展示开关，只改 <html> 上的 class，由 content.css 接管：
+   *  - hideHero：隐藏首页左侧 2×2 的大图推荐位
+   *  - hideSideButtons：隐藏右侧「换一换 / 刷新」悬浮按钮
+   * 默认都关闭；关闭时把 class 摘掉即可恢复，不会碰 B 站原有样式。
+   */
+  function applyLayoutFlags() {
+    const root = document.documentElement;
+    if (!root) return;
+    root.classList.toggle('bbai-hide-hero', !!cfg.enabled && !!cfg.hideHero);
+    root.classList.toggle('bbai-hide-side', !!cfg.enabled && !!cfg.hideSideButtons);
+  }
+
   /* -------------------------------- 初始化 --------------------------------- */
 
   function startObserver() {
@@ -733,6 +751,7 @@
     }
     await loadAllow();
     extraKeywords = parseKeywords(cfg.keywords);
+    applyLayoutFlags();
     startObserver();
     if (cfg.enabled) scan();
 
@@ -748,16 +767,20 @@
         return;
       }
       if (area !== 'sync') return;
-      let dirty = false;
+      let layoutDirty = false;
+      let needRefresh = false;
       for (const key of Object.keys(DEFAULTS)) {
-        if (key in changes) {
-          cfg[key] = changes[key].newValue;
-          dirty = true;
-        }
+        if (!(key in changes)) continue;
+        cfg[key] = changes[key].newValue;
+        if (key === 'hideHero' || key === 'hideSideButtons') layoutDirty = true;
+        else needRefresh = true;
       }
-      if (!dirty) return;
-      extraKeywords = parseKeywords(cfg.keywords);
-      refresh();
+      if (layoutDirty) applyLayoutFlags();
+      if (!needRefresh && !layoutDirty) return;
+      if (needRefresh) {
+        extraKeywords = parseKeywords(cfg.keywords);
+        refresh();
+      }
     });
 
     chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {

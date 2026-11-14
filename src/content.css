@@ -42,3 +42,15 @@
   text-overflow: ellipsis;
   pointer-events: none;
 }
+
+/* 可选：隐藏首页左侧 2×2 的大图推荐位（默认关闭，面板里开） */
+html.bbai-hide-hero .recommended-swipe {
+  display: none !important;
+}
+
+/* 可选：隐藏右侧「换一换 / 刷新 / 稍后再看」悬浮按钮（默认关闭，面板里开） */
+html.bbai-hide-side .feed-roll-btn,
+html.bbai-hide-side .flexible-roll-btn,
+html.bbai-hide-side .watchlater-pip-button {
+  display: none !important;
+}

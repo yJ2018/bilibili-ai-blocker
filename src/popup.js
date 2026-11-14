@@ -8,10 +8,12 @@ const DEFAULTS = {
   guess: false,
   markOnly: false,
   hideLive: true,
+  hideHero: false,
+  hideSideButtons: false,
   keywords: ''
 };
 
-const FIELDS = ['enabled', 'useApi', 'useDom', 'hideLive', 'guess', 'markOnly'];
+const FIELDS = ['enabled', 'useApi', 'useDom', 'hideLive', 'hideHero', 'hideSideButtons', 'guess', 'markOnly'];
 const $ = (id) => document.getElementById(id);
 
 let listOpen = false; // 屏蔽列表默认收起，点「已屏蔽」展开
@@ -168,9 +170,13 @@ async function refreshAll() {
 
 async function save(patch) {
   await chrome.storage.sync.set(patch);
+  // 纯布局开关（大图推荐位 / 悬浮按钮）不影响判定结果，不用重扫
+  const layoutOnly = Object.keys(patch).every((k) => k === 'hideHero' || k === 'hideSideButtons');
   const tab = await getActiveTab();
   if (tab && tab.id) {
-    await chrome.tabs.sendMessage(tab.id, { type: 'ai-rescan' }).catch(() => {});
+    if (!layoutOnly) {
+      await chrome.tabs.sendMessage(tab.id, { type: 'ai-rescan' }).catch(() => {});
+    }
     setTimeout(refreshAll, 400);
   }
 }

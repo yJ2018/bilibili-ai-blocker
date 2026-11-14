@@ -1,4 +1,4 @@
-<!doctype html>
+﻿<!doctype html>
 <html lang="zh-CN">
   <head>
     <meta charset="utf-8" />
@@ -50,35 +50,49 @@
           <input type="checkbox" id="useApi" />
           <span>
             <strong>校验 B 站 AI 声明</strong>
-            <em>读取官方「内容声明」，最准；每个视频只查一次，结果缓存 7 天</em>
+            <em>官方声明，最准；每个视频只查一次</em>
           </span>
         </label>
         <label class="opt">
           <input type="checkbox" id="useDom" />
           <span>
             <strong>识别页面 AI 角标</strong>
-            <em>卡片里直接带 AI 字样时立刻隐藏，不用等接口</em>
+            <em>卡片带 AI 字样时立即隐藏</em>
           </span>
         </label>
         <label class="opt">
           <input type="checkbox" id="hideLive" />
           <span>
             <strong>隐藏直播卡片</strong>
-            <em>首页「直播中」楼层卡、直播房间卡片一律隐藏</em>
+            <em>「直播中」楼层卡与直播间卡片</em>
+          </span>
+        </label>
+        <label class="opt">
+          <input type="checkbox" id="hideHero" />
+          <span>
+            <strong>隐藏左侧推荐大图</strong>
+            <em>左侧 2×2 大图位，卡片自动补位</em>
+          </span>
+        </label>
+        <label class="opt">
+          <input type="checkbox" id="hideSideButtons" />
+          <span>
+            <strong>隐藏右侧悬浮按钮</strong>
+            <em>右边缘的稍后再看 / 刷新 / 换一换</em>
           </span>
         </label>
         <label class="opt">
           <input type="checkbox" id="guess" />
           <span>
             <strong>标题关键词猜测</strong>
-            <em>标题/UP 主名出现 AI 工具名就隐藏，容易误伤，默认关</em>
+            <em>命中 AI 工具名就隐藏，易误伤</em>
           </span>
         </label>
         <label class="opt">
           <input type="checkbox" id="markOnly" />
           <span>
             <strong>只标注不隐藏（调试）</strong>
-            <em>被判定为 AI 的卡片用粉色虚线框出来</em>
+            <em>粉色虚线框标注，不隐藏</em>
           </span>
         </label>
       </section>
@@ -102,3 +116,5 @@
     <script src="popup.js"></script>
   </body>
 </html>
+
+
