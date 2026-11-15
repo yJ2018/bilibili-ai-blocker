@@ -1,4 +1,4 @@
-/* B站 AI 内容屏蔽 —— 设置面板 + 屏蔽预览 / 放行 */
+﻿/* B站 AI 内容屏蔽 —— 设置面板 + 屏蔽预览 / 放行 */
 'use strict';
 
 const DEFAULTS = {
@@ -10,10 +10,11 @@ const DEFAULTS = {
   hideLive: true,
   hideHero: false,
   hideSideButtons: false,
+  hideBanner: false,
   keywords: ''
 };
 
-const FIELDS = ['enabled', 'useApi', 'useDom', 'hideLive', 'hideHero', 'hideSideButtons', 'guess', 'markOnly'];
+const FIELDS = ['enabled', 'useApi', 'useDom', 'hideLive', 'hideBanner', 'hideHero', 'hideSideButtons', 'guess', 'markOnly'];
 const $ = (id) => document.getElementById(id);
 
 let listOpen = false; // 屏蔽列表默认收起，点「已屏蔽」展开
@@ -171,7 +172,7 @@ async function refreshAll() {
 async function save(patch) {
   await chrome.storage.sync.set(patch);
   // 纯布局开关（大图推荐位 / 悬浮按钮）不影响判定结果，不用重扫
-  const layoutOnly = Object.keys(patch).every((k) => k === 'hideHero' || k === 'hideSideButtons');
+  const layoutOnly = Object.keys(patch).every((k) => k === 'hideHero' || k === 'hideSideButtons' || k === 'hideBanner');
   const tab = await getActiveTab();
   if (tab && tab.id) {
     if (!layoutOnly) {
@@ -238,3 +239,4 @@ async function init() {
 }
 
 void init();
+

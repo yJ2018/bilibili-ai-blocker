@@ -1,4 +1,4 @@
-/*
+﻿/*
  * B站 AI 内容屏蔽 —— 内容脚本
  *
  * 识别思路（三路，按可靠性排序）：
@@ -82,6 +82,7 @@
     hideLive: true,
     hideHero: false,
     hideSideButtons: false,
+    hideBanner: false,
     keywords: ''
   };
 
@@ -726,6 +727,7 @@
     if (!root) return;
     root.classList.toggle('bbai-hide-hero', !!cfg.enabled && !!cfg.hideHero);
     root.classList.toggle('bbai-hide-side', !!cfg.enabled && !!cfg.hideSideButtons);
+    root.classList.toggle('bbai-hide-banner', !!cfg.enabled && !!cfg.hideBanner);
   }
 
   /* -------------------------------- 初始化 --------------------------------- */
@@ -772,7 +774,7 @@
       for (const key of Object.keys(DEFAULTS)) {
         if (!(key in changes)) continue;
         cfg[key] = changes[key].newValue;
-        if (key === 'hideHero' || key === 'hideSideButtons') layoutDirty = true;
+        if (key === 'hideHero' || key === 'hideSideButtons' || key === 'hideBanner') layoutDirty = true;
         else needRefresh = true;
       }
       if (layoutDirty) applyLayoutFlags();
@@ -823,3 +825,4 @@
 
   void init();
 })();
+

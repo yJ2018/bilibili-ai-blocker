@@ -56,6 +56,33 @@ html.bbai-hide-hero .container.is-version8 > * {
   margin-top: 0 !important;
 }
 
+/* 可选：隐藏首页顶部推广横幅（默认关闭，面板里开） */
+html.bbai-hide-banner .bili-header--large .bili-header__banner {
+  display: none !important;
+}
+
+html.bbai-hide-banner .bili-header--large {
+  height: auto !important;
+  padding-top: 64px !important; /* 给绝对定位的导航条留出高度 */
+  background: #fff !important;
+}
+
+html.bbai-hide-banner .bili-header--large .bili-header__menu {
+  background: #fff !important;
+}
+
+/* 导航原本是白字配深色大图，横幅去掉后改成深色字 */
+html.bbai-hide-banner .bili-header--large .left-entry__item-trigger,
+html.bbai-hide-banner .bili-header--large .left-entry__item-trigger *,
+html.bbai-hide-banner .bili-header--large .right-entry__item:not(.right-upload-entry),
+html.bbai-hide-banner .bili-header--large .right-entry__item:not(.right-upload-entry) * {
+  color: #18191c !important;
+}
+
+html.bbai-hide-banner .bili-header--large .bili-header__menu svg path {
+  fill: #18191c !important;
+}
+
 /* 可选：只隐藏右侧「稍后再看」悬浮按钮，「换一换 / 刷新」保留（默认关闭，面板里开） */
 html.bbai-hide-side .watchlater-pip-button {
   display: none !important;

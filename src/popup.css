@@ -296,7 +296,7 @@ body {
   display: flex;
   align-items: flex-start;
   gap: 8px;
-  padding: 4px 8px;
+  padding: 2px 8px;
   border-radius: 8px;
   cursor: pointer;
 }
@@ -325,7 +325,7 @@ body {
   font-style: normal;
   font-size: 11px;
   color: var(--muted);
-  line-height: 1.35;
+  line-height: 1.25;
 }
 
 .extra {
@@ -381,7 +381,7 @@ body {
   display: flex;
   align-items: center;
   gap: 6px;
-  padding: 8px 0;
+  padding: 7px 0;
   font-size: 12px;
   font-weight: 600;
   color: var(--text);
@@ -437,5 +437,6 @@ button:active {
   font-size: 11px;
   color: var(--muted);
 }
+
 
 
