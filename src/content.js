@@ -1,4 +1,4 @@
-﻿/*
+/*
  * B站 AI 内容屏蔽 —— 内容脚本
  *
  * 识别思路（三路，按可靠性排序）：
@@ -133,8 +133,7 @@
 
   function isAiText(text) {
     if (!text) return false;
-    if (AI_TEXT_RE.test(text)) return true;
-    return extraKeywords.some((kw) => kw && text.includes(kw));
+    return AI_TEXT_RE.test(text);
   }
 
   function sameMembers(arr, set) {
@@ -268,6 +267,25 @@
     const blob = normForGuess(title + ' ' + author);
     for (const kw of GUESS_KEYWORDS) {
       if (hitKeyword(blob, kw)) return kw;
+    }
+    return '';
+  }
+
+  /**
+   * 用户自定义屏蔽关键词：标题 / UP 主名 / 楼层卡标题里包含即隐藏。
+   * 归一化后按子串匹配（中文最常见），英文不区分大小写。
+   */
+  function keywordVerdict(el) {
+    if (!extraKeywords.length) return '';
+    const title = toText(el.querySelector('.bili-video-card__info--tit, h3, [class*="video-name"], .title'));
+    const author = toText(
+      el.querySelector('.bili-video-card__info--author, [class*="author"], [class*="up-name"], .sub-title')
+    );
+    const blob = normForGuess(title + ' ' + author);
+    if (!blob) return '';
+    for (const kw of extraKeywords) {
+      const k = normForGuess(kw);
+      if (k && blob.includes(k)) return kw;
     }
     return '';
   }
@@ -441,6 +459,14 @@
       return;
     }
 
+    // 用户自定义关键词：优先级最高，命中就藏
+    const custom = keywordVerdict(card);
+    if (custom) {
+      state.done.add(card);
+      hide(card, '自定义关键词：' + custom, 'keyword');
+      return;
+    }
+
     if (cfg.hideLive && isLiveCard(card)) {
       state.done.add(card);
       hide(card, '直播卡片', 'live');
@@ -604,10 +630,15 @@
 
   /** 楼层卡（直播 / 赛事 / 番剧 / 课程） */
   function scanFloors() {
-    if (!cfg.hideLive && !cfg.hideEsports) return;
+    if (!cfg.hideLive && !cfg.hideEsports && !extraKeywords.length) return;
     for (const floor of document.querySelectorAll(FLOOR_SEL)) {
       if (state.doneFloor.has(floor)) continue;
       state.doneFloor.add(floor);
+      const custom = keywordVerdict(floor);
+      if (custom) {
+        hide(floor, '自定义关键词：' + custom, 'keyword');
+        continue;
+      }
       if (cfg.hideEsports && isEsportsCard(floor)) {
         hide(floor, '赛事卡片', 'esports');
         continue;
