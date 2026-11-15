@@ -80,6 +80,7 @@
     guess: false,
     markOnly: false,
     hideLive: true,
+    hideEsports: false,
     hideHero: false,
     hideSideButtons: false,
     hideBanner: false,
@@ -276,6 +277,12 @@
     if (el.querySelector('.living, [class*="live-tag"], [class*="liveTag"]')) return true;
     if (el.querySelector('a[href*="live.bilibili.com"], a[href*="/live/"]')) return true;
     return /直播中/.test(toText(el));
+  }
+
+  /** 赛事卡片：楼层卡左上角的「赛事」角标（电竞赛事 / 体育赛事都算） */
+  function isEsportsCard(el) {
+    const badge = el.querySelector('.floor-title, .badge');
+    return !!badge && /赛事/.test(toText(badge));
   }
 
   /* ------------------------------- 隐藏与还原 ------------------------------ */
@@ -595,13 +602,17 @@
     if (changed) pushBadge();
   }
 
-  /** 楼层卡（直播 / 番剧 / 课程）：只处理直播的那种 */
+  /** 楼层卡（直播 / 赛事 / 番剧 / 课程） */
   function scanFloors() {
-    if (!cfg.hideLive) return;
+    if (!cfg.hideLive && !cfg.hideEsports) return;
     for (const floor of document.querySelectorAll(FLOOR_SEL)) {
       if (state.doneFloor.has(floor)) continue;
       state.doneFloor.add(floor);
-      if (isLiveCard(floor)) hide(floor, '直播卡片', 'live');
+      if (cfg.hideEsports && isEsportsCard(floor)) {
+        hide(floor, '赛事卡片', 'esports');
+        continue;
+      }
+      if (cfg.hideLive && isLiveCard(floor)) hide(floor, '直播卡片', 'live');
     }
   }
 
@@ -825,4 +836,5 @@
 
   void init();
 })();
+
 

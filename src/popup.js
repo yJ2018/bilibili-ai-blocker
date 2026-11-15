@@ -8,13 +8,14 @@ const DEFAULTS = {
   guess: false,
   markOnly: false,
   hideLive: true,
+  hideEsports: false,
   hideHero: false,
   hideSideButtons: false,
   hideBanner: false,
   keywords: ''
 };
 
-const FIELDS = ['enabled', 'useApi', 'useDom', 'hideLive', 'hideBanner', 'hideHero', 'hideSideButtons', 'guess', 'markOnly'];
+const FIELDS = ['enabled', 'useApi', 'useDom', 'hideLive', 'hideEsports', 'hideBanner', 'hideHero', 'hideSideButtons', 'guess', 'markOnly'];
 const $ = (id) => document.getElementById(id);
 
 let listOpen = false; // 屏蔽列表默认收起，点「已屏蔽」展开
@@ -239,4 +240,5 @@ async function init() {
 }
 
 void init();
+
 
