@@ -154,11 +154,18 @@ async function checkBvids(bvids) {
 
 /* --------------------------------- 图标角标 -------------------------------- */
 
+function silentPromise(p) {
+  if (p && typeof p.catch === 'function') p.catch(() => {});
+  return p;
+}
+
 function updateBadge(tabId, count) {
   if (typeof tabId !== 'number') return;
   try {
-    chrome.action.setBadgeText({ tabId, text: count > 0 ? String(count) : '' });
-    chrome.action.setBadgeBackgroundColor({ tabId, color: '#fb7299' });
+    // MV3 里这些 API 返回 Promise：tab 已关闭时会 reject（No tab with id），
+    // 必须显式吃掉，否则扩展的「错误」页会攒一堆 Uncaught (in promise)。
+    silentPromise(chrome.action.setBadgeText({ tabId, text: count > 0 ? String(count) : '' }));
+    silentPromise(chrome.action.setBadgeBackgroundColor({ tabId, color: '#fb7299' }));
   } catch (err) {
     // ignore
   }
@@ -166,13 +173,22 @@ function updateBadge(tabId, count) {
 
 /* --------------------------------- 消息路由 -------------------------------- */
 
+function safeRespond(sendResponse, payload) {
+  // 内容脚本切页 / 关闭后端口已断，sendResponse 会抛错，吞掉即可
+  try {
+    sendResponse(payload);
+  } catch (err) {
+    // ignore
+  }
+}
+
 chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
   if (!msg || typeof msg !== 'object') return undefined;
 
   if (msg.type === 'ai-check') {
     checkBvids(msg.bvids)
-      .then((payload) => sendResponse(payload))
-      .catch((err) => sendResponse({ error: String(err) }));
+      .then((payload) => safeRespond(sendResponse, payload))
+      .catch((err) => safeRespond(sendResponse, { error: String(err) }));
     return true;
   }
 
