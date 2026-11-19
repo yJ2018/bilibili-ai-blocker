@@ -66,7 +66,7 @@ Edge / 360 等 Chromium 内核浏览器同理（`edge://extensions/`）。
 
 ### 3. 拦截设置
 
-默认展开，七个开关：
+默认展开，九个开关（外加面板右上角的总开关）：
 
 | 开关 | 默认 | 说明 |
 | --- | --- | --- |
@@ -216,21 +216,21 @@ flex 行默认 `align-items: stretch`：把卡片 `display: none` 之后，格�
 
 <sub>同一页、同一批被屏蔽的卡片（3 张直播 + 2 张 AI）：左 1.7.1 只藏卡片，格子还在，红框处是空洞；右 1.7.2 藏整格，后面的卡片前移补位。</sub>
 
-另外两个**默认关闭**的布局开关（面板「拦截设置」里开）：
+另外三个**默认关闭**的布局开关（面板「拦截设置」里开）：
 
 - **隐藏顶部推广横幅**：隐藏首页顶部活动横幅 `.bili-header__banner`，导航条改成白底深字，页面整体上移；只在 `.bili-header--large`（首页）生效，其它页面不受影响；
 - **隐藏左侧推荐大图**：隐藏首页 2×2 的大图轮播位 `.recommended-swipe`，网格自动用卡片补位；同时把 B 站给卡片打的 inline `margin-top` 清零（那些 margin 原本是对齐大图两行用的，留着会造成行错位）；
 - **隐藏右侧稍后再看**：只隐藏右下角的 `.watchlater-pip-button`（稍后再看），
   「换一换」和「刷新内容」保持原样；该按钮是悬浮控件，藏掉不占布局、不影响信息流。
 
-两个开关都只给 `<html>` 加一个 class（`bbai-hide-hero` / `bbai-hide-side`），
+三个开关只给 `<html>` 加一个 class（`bbai-hide-banner` / `bbai-hide-hero` / `bbai-hide-side`），
 不覆盖 B 站原有样式，关掉立即恢复。
 
 隐藏大图后页面会变短（少了一整块 2×2 区域），向下滚动 B 站会继续加载下一批，
 属于正常现象；骨架占位同样会被临时隐藏，不会露出灰色块。
 
-滚动到底时 B 站照常加载下一批，插件会继续过滤。若 B 站改版换了类名，
-会退化成「向上找独占一个格子的父节点」，一般也能藏对。
+滚动到底时 B 站照常加载下一批，插件会继续过滤。若 B 站改版连结构也换了，
+`pickTarget()` 会退化成「向上找独占一个格子的父节点」，一般也能藏对。
 
 ---
 
@@ -308,9 +308,9 @@ flex 行默认 `align-items: stretch`：把卡片 `display: none` 之后，格�
 bilibili-ai-blocker/
 ├── manifest.json          # MV3 清单
 ├── icons/                 # 16 / 32 / 48 / 128 图标
-├── docs/                  # README 截图
+├── docs/                  # README 截图（compare / search-fill / popup / debug）
 └── src/
-    ├── content.js         # 卡片识别、隐藏、放行、MutationObserver
+    ├── content.js         # 卡片识别、找格位、隐藏、放行、MutationObserver
     ├── content.css        # .bbai-hidden / .bbai-marked / 骨架隐藏样式
     ├── background.js      # 调 B 站接口、缓存、节流、角标数字
     ├── popup.html         # 设置面板 + 屏蔽预览
@@ -320,7 +320,8 @@ bilibili-ai-blocker/
 
 ## 想自己改
 
-- **加卡片类型**：`content.js` 顶部的 `CARD_SEL`（要检查的节点）、`WRAPPERS`（要隐藏的格位）；
+- **加卡片类型**：`content.js` 顶部的 `CARD_SEL`（要检查的节点）、`WRAPPERS`（已知的格位容器）；
+- **改隐藏层级**：`pickTarget()`——决定「藏哪一层」才能让布局补位，逻辑见上文「为什么必须藏格子」；
 - **改关键词**：`GUESS_KEYWORDS`（猜测模式），或面板里的「自定义关键词」（角标识别）；
 - **改请求策略**：`background.js` 里的 `REQUEST_GAP_MS` / `CACHE_TTL` / `CACHE_MAX`；
 - **清缓存**：DevTools → Application → Extension storage，删 `aiCache`；
@@ -333,8 +334,8 @@ bilibili-ai-blocker/
 - 1.7.0：自定义关键词改为直接匹配标题 / UP 主名 / 楼层标题（之前只匹配 AI 角标，容易让人以为没生效）
 - 1.6.0：新增「屏蔽电竞赛事」开关（默认关闭），隐藏「赛事」楼层卡
 - 1.5.0：新增「隐藏顶部推广横幅」开关（默认关闭）
-- 1.4.1：右侧按钮开关收窄为只隐藏「稍后再看」，「换一换 / 刷新」保留
 - 1.4.2：修复隐藏左侧大图后卡片行错位（清除 B 站遗留的 inline margin-top）
+- 1.4.1：右侧按钮开关收窄为只隐藏「稍后再看」，「换一换 / 刷新」保留
 - 1.4.0：新增两个可选布局开关 —— 隐藏左侧 2×2 大图推荐位、隐藏右侧悬浮按钮（默认关闭）
 - 1.3.2：关键词猜测算法改为「归一化 + 英文词边界 + 中文子串」，修正 `veo3`、全角、`Soraka` 误判
 - 1.3.1：面板默认展开设置、列表收起，点「已屏蔽」展开；列表加高；折叠箭头换成细线 chevron
