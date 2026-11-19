@@ -305,13 +305,47 @@
 
   /* ------------------------------- 隐藏与还原 ------------------------------ */
 
+  /**
+   * 找到该藏的「格位」。
+   *
+   * 只藏卡片本身是不够的：搜索页的格子是 .video-list > div.col_xl_1_7 ...，
+   * flex 行默认 align-items: stretch，卡片 display:none 之后格子照样占着宽度和行高，
+   * 页面上就留下一个空洞（后面的卡片不会前移）。
+   * 所以这里要先爬到这个「和别的格子并排」的容器，藏它才会真正补位。
+   */
   function pickTarget(card) {
     for (const sel of WRAPPERS) {
       const wrapper = card.closest(sel);
       if (wrapper) return wrapper;
     }
-    // 没有已知包裹层时，向上找到「独占一个格子」的那层
+
+    // 找「卡片网格」里的格子：父节点的兄弟必须都是「最多一张卡」的格子。
+    // 搜索页就是这样：.video-list > div.col_xl_1_7 > .bili-video-card。
+    // 一旦发现同层混着装了一堆卡的列表（比如视频页右侧 .rec-list 塞了 19 张），
+    // 说明已经爬过头了，立刻收手，退回藏卡片本身。
     let node = card;
+    for (let i = 0; i < 4; i++) {
+      const parent = node.parentElement;
+      if (!parent || parent.tagName === 'BODY' || parent.tagName === 'MAIN') break;
+      if (node !== card && node.querySelectorAll(CARD_SEL).length > 1) break;
+
+      let cardSiblings = 0;
+      let hasListSibling = false;
+      for (const el of parent.children) {
+        if (el === node) continue;
+        const count = el.matches(CARD_SEL) ? 1 : el.querySelectorAll(CARD_SEL).length;
+        if (count > 1) {
+          hasListSibling = true;
+          break;
+        }
+        if (count === 1) cardSiblings++;
+      }
+      if (cardSiblings > 0 && !hasListSibling) return node;
+      node = parent;
+    }
+
+    // 兜底：向上找到「独占一个格子」的那层
+    node = card;
     let parent = node.parentElement;
     for (let i = 0; i < 3 && parent; i++) {
       if (parent.children.length !== 1) break;
